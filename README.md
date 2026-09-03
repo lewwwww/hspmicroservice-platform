@@ -1,4 +1,4 @@
-# hspliving 家居商品微服务平台
+# 家居商品微服务平台
 
 基于 **Spring Cloud** 的微服务学习项目，采用前后端分离架构，围绕家居商品发布流程实现后台管理、商品分类、品牌管理、属性分组、规格参数、销售属性、SPU/SKU、OSS 文件上传、Gateway 路由、Nacos 注册发现和 Nginx 反向代理等功能。适合学习 Spring Cloud Alibaba 微服务、网关路由、服务注册发现、MyBatis-Plus 等技术的参考实践。
 
