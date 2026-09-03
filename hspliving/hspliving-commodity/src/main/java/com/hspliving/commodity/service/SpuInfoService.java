@@ -10,9 +10,6 @@ import java.util.Map;
 /**
  * 商品spu信息
  *
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-12-05 14:26:19
  */
 public interface SpuInfoService extends IService<SpuInfoEntity> {
 

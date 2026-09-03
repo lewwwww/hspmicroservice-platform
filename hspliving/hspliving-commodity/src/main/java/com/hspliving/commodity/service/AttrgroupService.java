@@ -11,9 +11,6 @@ import java.util.Map;
 /**
  * 家居商品属性分组
  *
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-11-21 10:11:30
  */
 public interface AttrgroupService extends IService<AttrgroupEntity> {
 

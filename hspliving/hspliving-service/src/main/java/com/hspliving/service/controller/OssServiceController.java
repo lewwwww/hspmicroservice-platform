@@ -58,7 +58,7 @@ public class OssServiceController {
             String postSignature = ossClient.calculatePostSignature(postPolicy);
 
             respMap = new LinkedHashMap<String, String>();
-            respMap.put("accessid", accessId); //这里坑了老韩一把
+            respMap.put("accessid", accessId); //这里容易踩坑
             respMap.put("policy", encodedPolicy);
             respMap.put("signature", postSignature);
             respMap.put("dir", dir);

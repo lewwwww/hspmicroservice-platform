@@ -11,9 +11,6 @@ import java.util.Map;
 /**
  * 商品属性表
  *
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-11-26 14:02:57
  */
 public interface AttrService extends IService<AttrEntity> {
 

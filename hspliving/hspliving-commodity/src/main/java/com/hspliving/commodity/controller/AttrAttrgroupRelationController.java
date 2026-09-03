@@ -21,9 +21,6 @@ import com.hspliving.common.utils.R;
 /**
  * 商品属性和商品属性组的关联表
  *
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-11-28 10:16:28
  */
 @RestController
 @RequestMapping("commodity/attrattrgrouprelation")

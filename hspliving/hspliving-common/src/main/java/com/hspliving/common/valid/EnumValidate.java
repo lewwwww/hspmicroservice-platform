@@ -14,7 +14,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * @version 1.0
- * 老韩解读
+ * 解读
  * 1. 创建自定义的注解EnumValidate 参考@NotNull源码来开发
  * 2. @Constraint(validatedBy = {EnumConstraintValidator.class}) 可以指定该自定义注解和EnumConstraintValidator校验器关联
  * 3. String message() default "{?}"; 可以指定校验时，返回的信息

@@ -29,9 +29,6 @@ import javax.annotation.Resource;
 /**
  * 家居商品属性分组
  *
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-11-21 10:11:30
  */
 @RestController
 @RequestMapping("commodity/attrgroup")
@@ -79,7 +76,7 @@ public class AttrgroupController {
     }
 
     /**
-     * 老韩说明
+     * 说明
      * 1. 根据业务需求，增加根据分类(第3级分类) + 查询条件+ 分页的API接口/方法
      */
     @RequestMapping("/list/{categoryId}")

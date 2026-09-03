@@ -10,9 +10,6 @@ import lombok.Data;
 /**
  * sku图片
  * 
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-12-08 13:27:29
  */
 @Data
 @TableName("commodity_sku_images")

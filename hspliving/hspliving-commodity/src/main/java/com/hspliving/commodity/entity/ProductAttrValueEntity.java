@@ -10,9 +10,6 @@ import lombok.Data;
 /**
  * spu基本属性值
  * 
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-12-08 09:45:34
  */
 @Data
 @TableName("commodity_product_attr_value")

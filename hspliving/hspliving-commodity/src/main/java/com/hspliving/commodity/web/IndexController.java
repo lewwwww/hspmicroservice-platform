@@ -31,7 +31,7 @@ public class IndexController {
         //将 categoryEntities放入到 model
         model.addAttribute("categories", categoryEntities);
 
-        //老师说明: 默认找到就是 "classpath\templates\" + "index" + ".html"
+        //说明: 默认找到就是 "classpath\templates\" + "index" + ".html"
         return "index";
     }
 

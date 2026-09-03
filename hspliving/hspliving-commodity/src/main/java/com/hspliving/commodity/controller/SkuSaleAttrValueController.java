@@ -21,9 +21,6 @@ import com.hspliving.common.utils.R;
 /**
  * sku的销售属性/值表
  *
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-12-08 14:50:25
  */
 @RestController
 @RequestMapping("commodity/skusaleattrvalue")

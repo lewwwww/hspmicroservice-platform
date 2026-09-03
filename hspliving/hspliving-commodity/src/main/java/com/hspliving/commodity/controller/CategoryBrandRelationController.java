@@ -23,9 +23,6 @@ import com.hspliving.common.utils.R;
 /**
  * 品牌分类关联表
  *
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-11-24 15:58:31
  */
 @RestController
 @RequestMapping("commodity/categorybrandrelation")
@@ -89,7 +86,7 @@ public class CategoryBrandRelationController {
     public R save(@RequestBody CategoryBrandRelationEntity categoryBrandRelation) {
         //categoryBrandRelationService.save(categoryBrandRelation);
 
-        //老师说明，因为我们要保存brandName 和 categoryName ,所以我们使用自定义的方法saveAll
+        //说明，因为我们要保存brandName 和 categoryName ,所以我们使用自定义的方法saveAll
         categoryBrandRelationService.saveAll(categoryBrandRelation);
         return R.ok();
     }

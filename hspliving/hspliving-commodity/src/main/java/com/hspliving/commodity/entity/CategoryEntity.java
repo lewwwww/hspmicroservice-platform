@@ -15,9 +15,6 @@ import lombok.Data;
 /**
  * 商品分类表
  * 
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-10-27 10:26:11
  */
 @Data
 @TableName("commodity_category")
@@ -43,7 +40,7 @@ public class CategoryEntity implements Serializable {
 	private Integer catLevel;
 	/**
 	 * 0不显示，1显示
-	 * 老师说明
+	 * 说明
 	 * 1. 如果我们没有在application.yml配置逻辑删除和未删除的值, 也
 	 *    可以通过 @TableLogic；来配置, 如下
 	 *     @TableLogic(value = "1", delval = "0")

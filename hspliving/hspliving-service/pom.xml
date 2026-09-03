@@ -37,7 +37,7 @@
 
         <!--引入 oss starter 我们引入的stater 和文档给的不一样，
         请注意观察artifactId , 小伙伴要和老师写的保持一致
-            老师说明: 因为我们在该pom.xml文件中有 dependencyManagement 指定了 spring-cloud-alibaba-dependencies
+            说明: 因为我们在该pom.xml文件中有 dependencyManagement 指定了 spring-cloud-alibaba-dependencies
             版本 2.1.0.RELEASE, 因此这里，我们可以不写version 而是使用版本仲裁
         -->
         <dependency>
@@ -73,7 +73,7 @@
 
     <!--
          1. 这里老师想回顾使用dependencyManagement 在进行版本控制
-         2. 老韩再强调一下dependencyManagement 用于指定依赖版本,
+         2. 再强调一下dependencyManagement 用于指定依赖版本,
              但是本身并不引入相关依赖
    -->
     <dependencyManagement>

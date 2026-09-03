@@ -11,9 +11,6 @@ import java.util.Map;
 /**
  * 商品分类表
  *
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-10-27 10:26:11
  */
 public interface CategoryService extends IService<CategoryEntity> {
 

@@ -154,7 +154,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         }).collect(Collectors.toList());
 
         //3. 根据得到attrIds 获取对应的attrEntity
-        //   老师说明: 如果当前attrgroupId没有关联任何的基本属性 , 前面的attrIds就是[]
+        //   说明: 如果当前attrgroupId没有关联任何的基本属性 , 前面的attrIds就是[]
         // 如果没有关联任何的基本属性，返回null
         if (attrIds == null || attrIds.size() == 0) {
             return null;

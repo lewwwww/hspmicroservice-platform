@@ -7,7 +7,7 @@ import java.util.Set;
 
 /**
  * @version 1.0
- * 老韩解读
+ * 解读
  * 1. EnumConstraintValiator是真正的校验器,即校验的逻辑是写在这里的
  * 2. EnumConstraintValiator需要实现接口 ConstraintValidator
  * 3. <EnumValidate,Integer> 表示该校验器是针对 @EnumValidate 传入的Integer类型数据进行校验

@@ -11,9 +11,6 @@ import lombok.Data;
 /**
  * sku信息
  * 
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-12-08 10:42:28
  */
 @Data
 @TableName("commodity_sku_info")

@@ -18,9 +18,6 @@ import javax.validation.constraints.*;
 /**
  * 家居品牌
  *
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-11-07 09:55:42
  */
 @Data
 @TableName("commodity_brand")
@@ -29,7 +26,7 @@ public class BrandEntity implements Serializable {
 
     /**
      * id
-     * 老韩解读
+     * 解读
      * 1. @NotNull(message = "修改要求指定id",groups = {UpdateGroup.class})
      * 表示@NotNull 在UpdateGroup校验组生效
      * <p>
@@ -42,7 +39,7 @@ public class BrandEntity implements Serializable {
     private Long id;
     /**
      * 品牌名
-     * 老韩说明
+     * 说明
      * 1. @NotBlank 表示name必须包括一个非空字符
      * 2. message = "品牌名不能为空" 是老师指定的一个校验消息
      * 3. 如果没有指定 message = "品牌名不能为空" ,就会返回默认的校验消息  key = javax.validation.constraints.NotBlank.message
@@ -69,7 +66,7 @@ public class BrandEntity implements Serializable {
      * 1. 这里我们使用的注解是@NotNull, 他可以接收任意类型
      * 2. 如果这里使用 @NotBlank , 会报错 ,因为 @NotBlank 不支持Integer
      * 3. 同学们在开发时，需要知道注解可以用在哪些类型上，可以查看注解源码
-     * 4. 老师说明，假如 isshow 规定是 0/1 , 这时我们后面通过自定义校验器来解决..
+     * 4. 说明，假如 isshow 规定是 0/1 , 这时我们后面通过自定义校验器来解决..
      * 5. 如果是String 类型，可以直接使用@Pattern来进一步校验
      */
     @NotNull(message = "显示状态不能为空", groups = {SaveGroup.class, UpdateGroup.class, UpdateIsShowGroup.class})

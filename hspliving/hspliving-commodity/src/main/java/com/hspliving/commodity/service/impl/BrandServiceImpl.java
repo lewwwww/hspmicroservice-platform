@@ -20,7 +20,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
     public PageUtils queryPage(Map<String, Object> params) {
 
         // 1.通过分析后端的代码,我们指定如果需要进行带条件查询, 就给QueryWrapper 设置查询条件和参数
-        // 2.这里老韩就简单实现一把
+        // 2.这里就简单实现一把
         // 3.这里我们演示一下, 后面我们有更好的方案
 
         //QueryWrapper<BrandEntity> brandEntityQueryWrapper = new QueryWrapper<>();

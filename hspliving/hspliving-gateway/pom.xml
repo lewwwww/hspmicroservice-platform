@@ -47,7 +47,7 @@
             </exclusions>
         </dependency>
         <!--
-            老韩说明
+            说明
             1. gateway本身不需要spring-boot-starter-web
             2. 所以我们就不用引入 spring-boot-starter-web, 如果保留启动的时候会报告冲突
             3. 一会老师测试.. 再进行修改
@@ -67,7 +67,7 @@
 
     <!--
           1. 这里老师想回顾使用dependencyManagement 在进行版本控制
-          2. 老韩再强调一下dependencyManagement 用于指定依赖版本,
+          2. 再强调一下dependencyManagement 用于指定依赖版本,
               但是本身并不引入相关依赖
     -->
     <dependencyManagement>

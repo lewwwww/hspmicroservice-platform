@@ -10,9 +10,6 @@ import lombok.Data;
 /**
  * 品牌分类关联表
  * 
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-11-24 15:58:31
  */
 @Data
 @TableName("commodity_category_brand_relation")

@@ -26,9 +26,6 @@ import com.hspliving.common.utils.R;
 /**
  * 家居品牌
  *
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-11-07 09:55:42
  */
 @RestController
 @RequestMapping("commodity/brand")
@@ -61,7 +58,7 @@ public class BrandController {
     }
 
     /**
-     * 老韩说明
+     * 说明
      * 1. @Validated 注解的作用就是启用 BrandEntity 字段校验
      * 2. 注解如果没有写 @Validated 这个校验规则不生效
      * 3. BindingResult result: springboot 会将校验的错误放入到 result
@@ -119,14 +116,6 @@ public class BrandController {
         return R.ok();
     }
 
-    @RequestMapping("/save2")
-    //@RequiresPermissions("commodity:brand:update")
-    public R save2(@RequestBody BrandEntity brand) {
-
-        int num = 10 / 0;
-
-        return R.ok();
-    }
 
     /**
      * 删除

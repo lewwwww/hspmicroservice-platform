@@ -21,9 +21,6 @@ import com.hspliving.common.utils.R;
 /**
  * 商品spu信息
  *
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-12-05 14:26:19
  */
 @RestController
 @RequestMapping("commodity/spuinfo")
@@ -75,7 +72,7 @@ public class SpuInfoController {
 
     /**
      * 保存
-     * 老韩解读:
+     * 解读:
      * 1. 因为我们保存的商品信息, 涉及到的表非常多, 不是 SpuInfoEntity 实体类可以全部包含的
      * 2. 将 SpuInfoEntity 改成我们前面生成的 SpuSaveVo 对象，将前端提交的json数据全部封装到 SpuSaveVo
      * 3. 然后在下面的业务中，进行相应的保存

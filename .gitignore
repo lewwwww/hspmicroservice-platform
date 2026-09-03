@@ -62,3 +62,6 @@ _captcha/
 # Audit temp (do not commit)
 _audit/
 
+
+# Temp scripts (do not commit)
+_notes_tmp/

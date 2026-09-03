@@ -29,7 +29,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     //学会一会，小伙伴们可以将其作为一个方案 在以后的工作中使用..
     @Override
     public List<CategoryEntity> listTree() {
-        //老韩思路分析-步骤
+        //思路分析-步骤
         //1. 查出所有的分类数据
         List<CategoryEntity> entities = baseMapper.selectList(null);
 
@@ -160,7 +160,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      * 返回二级分类(包含三级分类)的数据-按照规定的格式Map<String, List<Catalog2Vo>>
      * 这里我们会使用到流式计算的 集合->map
      * 有一定难度-有层级关系
-     * 老师分析: 我们需要一个辅助方法, 就是通过parentId获取对应的下一级的分类数据
+     * 分析: 我们需要一个辅助方法, 就是通过parentId获取对应的下一级的分类数据
      *
      * @return
      */
@@ -226,7 +226,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     /**
      * 编写方法，更加categoryId 递归的查找层级关系
      * ，比如我们接收到 categoryId 301->parentId->....直到parentId=0
-     * 老师说明：这里有点麻烦
+     * 说明：这里有点麻烦
      * <p>
      * 这里老师做简单实现分析
      * cascadedCategoryId =>[301]

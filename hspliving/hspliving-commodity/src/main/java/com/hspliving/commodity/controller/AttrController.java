@@ -20,9 +20,6 @@ import com.hspliving.common.utils.R;
 /**
  * 商品属性表
  *
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-11-26 14:02:57
  */
 @RestController
 @RequestMapping("commodity/attr")

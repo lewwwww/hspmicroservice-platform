@@ -8,9 +8,6 @@ import org.apache.ibatis.annotations.Param;
 /**
  * 商品spu信息
  *
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-12-05 14:26:19
  */
 @Mapper
 public interface SpuInfoDao extends BaseMapper<SpuInfoEntity> {

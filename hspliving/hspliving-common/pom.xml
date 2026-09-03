@@ -78,7 +78,7 @@
 
     <!--
           1. 这里老师想回顾使用dependencyManagement 在进行版本控制
-          2. 老韩再强调一下dependencyManagement 用于指定依赖版本,
+          2. 再强调一下dependencyManagement 用于指定依赖版本,
               但是本身并不引入相关依赖
     -->
     <dependencyManagement>

@@ -11,9 +11,6 @@ import lombok.Data;
 /**
  * 家居商品属性分组
  * 
- * @author hsp
- * @email hsp@gmail.com
- * @date 2022-11-21 10:11:30
  */
 @Data
 @TableName("commodity_attrgroup")

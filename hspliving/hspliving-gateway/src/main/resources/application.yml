@@ -10,7 +10,7 @@ spring:
       routes: #配置路由,可以有多个路由
         - id: hspliving_service_route # 路由id, 由程序员指定,保证唯一
           #当前配置完成的需求
-          #老师说明: 因为 api/service/ 是一个更加精确的路径, 必须将 这组路由放在 /api 这个路由前
+          #说明: 因为 api/service/ 是一个更加精确的路径, 必须将 这组路由放在 /api 这个路由前
           #否则会报错, 会可以看看细节.
           # http://localhost:5050/api/service/oss/policy
           #如果到网关的请求是 http://localhost:5050/api/service/??/??/?? ,gateway通过断言
@@ -24,7 +24,7 @@ spring:
             - RewritePath=/api/service/(?<segment>.*), /$\{segment}
         - id: hspliving_commodity_route # 路由id, 由程序员指定,保证唯一
           #当前配置完成的需求
-          #老师说明: 因为 api/commodity/ 是一个更加精确的路径, 必须将 这组路由放在 /api 这个路由前
+          #说明: 因为 api/commodity/ 是一个更加精确的路径, 必须将 这组路由放在 /api 这个路由前
           #否则会报错, 会可以看看细节.
           # http://localhost:5050/api/commodity/category/list/tree
           #如果到网关的请求是 http://localhost:5050/api/commodity/??/??/?? ,gateway通过断言

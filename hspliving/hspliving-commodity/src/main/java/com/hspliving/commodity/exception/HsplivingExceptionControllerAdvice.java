@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  * @version 1.0
- * 老韩解读
+ * 解读
  * 1. @ResponseBody: 表示以json格式返回数据
  * 2. @Slf4j : 可以输出日志, 便于观察
  * 3. @ControllerAdvice(basePackages = "com.hspliving.commodity.controller")
@@ -26,7 +26,7 @@ import java.util.Map;
 public class HsplivingExceptionControllerAdvice {
 
     /**
-     * 老师说明
+     * 说明
      * 1. @ExceptionHandler({MethodArgumentNotValidException.class})
      *    表示如果 com.hspliving.commodity.controller包抛出了数据校验异常
      *    , 就由handleValidException()处理
