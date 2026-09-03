@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -23,68 +25,35 @@ import com.hspliving.commodity.service.CategoryService;
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
-
-    //核心方法 返回所有分类及其子分类(带有层级关系-即树形!)
-    //这里我们会使用到java8的 流式计算(stream api) + 递归操作(有一定难度)
-    //学会一会，小伙伴们可以将其作为一个方案 在以后的工作中使用..
+    /**
+     * 返回所有分类及其子分类（树形结构）
+     * 实现：一次查库 + 按 parentId 分组（Map），递归组树时 O(1) 取子节点
+     * 复杂度：由逐层全表扫描的 O(n²) 优化为 O(n)
+     */
     @Override
     public List<CategoryEntity> listTree() {
-        //思路分析-步骤
-        //1. 查出所有的分类数据
+        //1. 一次查出所有分类
         List<CategoryEntity> entities = baseMapper.selectList(null);
 
-        //2. 组装成层级树形结构[使用到 java8的 stream api + 递归操作]
-        //思路
-        List<CategoryEntity> categoryTree = entities.stream().filter(categoryEntity -> {
-            //2.1 过滤filter, 返回 1级分类
-            return categoryEntity.getParentId() == 0;
-        }).map(category -> {
-            //2.2 进行map映射操作, 给每个一级分类设置对应的子分类 (这个过程会使用到递归)
-            category.setChildrenCategories(getChildrenCategories(category, entities));
-            return category;
-        }).sorted((category1, category2) -> {
-            //2.3 进行排序sorted操作, 按照sort的升序排列
-            return (category1.getSort() == null ? 0 : category1.getSort()) -
-                    (category2.getSort() == null ? 0 : category2.getSort());
-        }).collect(Collectors.toList());//2.4 将处理好的数据收集collect/转换到集合
-        //3. 返回 带有层级关系数据-即树形
-        return categoryTree;
+        //2. 按 parentId 分组，构建 父id -> 子分类列表 的映射（O(n)）
+        Map<Long, List<CategoryEntity>> childrenMap = entities.stream()
+                .collect(Collectors.groupingBy(CategoryEntity::getParentId));
+
+        //3. 从根（parentId=0）开始递归组树，每层 O(1) 取子节点
+        return buildTree(0L, childrenMap);
     }
 
-    //递归查询所有分类的子分类
-    //1. 该方法的任务就是把 root 下的所有子分类的层级关系组织好(有多少级，就处理多少级)，并返回
-    //2. all 就是所有的分类信息[即上个方法的entities]
-    private List<CategoryEntity> getChildrenCategories(CategoryEntity root, List<CategoryEntity> all) {
-
-        //过滤
-        List<CategoryEntity> children =
-                all.stream().filter(categoryEntity -> {
-                    //这里有问题, categoryEntity.getParentId() root.getId()
-                    //返回的是 Long 包装类型 == 表示是对象比较
-                    //return categoryEntity.getParentId() == root.getId();
-                    //解决方法1
-                    //return categoryEntity.getParentId().longValue() == root.getId().longValue();
-                    /**
-                     *  public boolean equals(Object obj) {
-                     *         if (obj instanceof Long) {
-                     *             return value == ((Long)obj).longValue();
-                     *         }
-                     *         return false;
-                     *  }
-                     */
-                    //解决方案2 转成对数值的比较
-                    return categoryEntity.getParentId().equals(root.getId());
-                }).map(categoryEntity -> {
-                    //1. 找到子分类, 并设置,递归
-                    categoryEntity.setChildrenCategories(getChildrenCategories(categoryEntity, all));
-                    return categoryEntity;
-                }).sorted((category1, category2) -> {
-                    //按照sort排序-升序
-                    return (category1.getSort() == null ? 0 : category1.getSort()) -
-                            (category2.getSort() == null ? 0 : category2.getSort());
-                }).collect(Collectors.toList());
-
-        return children;
+    /**
+     * 递归构建某一父节点下的子树
+     */
+    private List<CategoryEntity> buildTree(Long parentId, Map<Long, List<CategoryEntity>> childrenMap) {
+        return childrenMap.getOrDefault(parentId, Collections.emptyList()).stream()
+                .map(category -> {
+                    category.setChildrenCategories(buildTree(category.getId(), childrenMap));
+                    return category;
+                })
+                .sorted(Comparator.comparingInt(c -> c.getSort() == null ? 0 : c.getSort()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -98,26 +67,26 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     /**
-     * 分析
-     * 1. 该方法返回 cascadedCategoryId, 数据形式是 [1,21,301]
-     * 2. 这里我们需要使用到递归， 会递归的查找parentId
-     *
-     * @param categoryId
-     * @return
+     * 返回 categoryId 的完整层级路径，如 [1,21,301]
+     * 实现：一次查库构建 id->entity 映射，内存回溯父链
+     * 优化：由每层递归查库（N+1 查询）改为 1 次查询 + 内存回查
      */
     @Override
     public Long[] getCascadedCategoryId(Long categoryId) {
 
-        //1. 先创建一个集合, 把层级关系收集到集合
+        //1. 一次查出所有分类，构建 id -> 分类 映射
+        Map<Long, CategoryEntity> entityMap = baseMapper.selectList(null).stream()
+                .collect(Collectors.toMap(CategoryEntity::getId, Function.identity()));
+
+        //2. 从当前分类沿 parentId 向上回溯，收集 [当前,父,根]
         List<Long> cascadedCategoryId = new ArrayList<>();
+        Long currentId = categoryId;
+        while (currentId != null && entityMap.containsKey(currentId)) {
+            cascadedCategoryId.add(currentId);
+            currentId = entityMap.get(currentId).getParentId();
+        }
 
-        //2. 调用方法进行处理-递归方法
-        //   cascadedCategoryId是引用传递, 所以直接就影响到 本方法的 cascadedCategoryId
-        //   返回的数据 如 [301,21,1]
-        getParentCategoryId(categoryId, cascadedCategoryId);
-
-        //3 将cascadedCategoryId集合进行翻转 [301,21,1]=>[1,21,301]
-        //  项目的逻辑+java基础
+        //3. 翻转成 [根,父,当前]
         Collections.reverse(cascadedCategoryId);
         return cascadedCategoryId.toArray(new Long[cascadedCategoryId.size()]);
     }
@@ -132,120 +101,57 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                 this.baseMapper.selectList(queryWrapper);
 
         return categoryEntities;
-
-        //上面其实一条语句也可以完成
-
-        //return this.baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_id",0));
-
-
     }
-
-    /**
-     * @param selectList 就是所有的分类数据
-     * @param parentCId  根据父级的分类Id,返回对应的分类数据
-     * @return
-     */
-    private List<CategoryEntity> getParent_cid
-    (List<CategoryEntity> selectList, Long parentCId) {
-
-        //流式计算-filter
-        List<CategoryEntity> categoryEntities = selectList.stream().filter(item -> {
-            return item.getParentId().equals(parentCId);
-        }).collect(Collectors.toList());
-        return categoryEntities;
-    }
-
 
     /**
      * 返回二级分类(包含三级分类)的数据-按照规定的格式Map<String, List<Catalog2Vo>>
-     * 这里我们会使用到流式计算的 集合->map
-     * 有一定难度-有层级关系
-     * 分析: 我们需要一个辅助方法, 就是通过parentId获取对应的下一级的分类数据
-     *
-     * @return
+     * 实现：一次查库 + 按 parentId 分组，各级分类均 O(1) 从映射取
+     * 复杂度：由逐级全表扫描的 O(n²) 优化为 O(n)
      */
     @Override
     public Map<String, List<Catalog2Vo>> getCatalogJson() {
 
-        //-先得到所有的分类数据[到数据表查一次]-> 在程序中进行业务处理 -> Map<String, List<Catalog2Vo>>
-
-        //- 得到所有的分类数据[到数据表查一次]
-        List<CategoryEntity> selectList =
-                this.baseMapper.selectList(null);
-
-        //- 从一级分类开始 -》 二级分类 -》 三级分类 ->
+        //- 一次查出所有分类，按 parentId 分组
+        List<CategoryEntity> selectList = this.baseMapper.selectList(null);
+        Map<Long, List<CategoryEntity>> childrenMap = selectList.stream()
+                .collect(Collectors.groupingBy(CategoryEntity::getParentId));
 
         //- 得到所有的一级分类
         List<CategoryEntity> level1Categories =
-                getParent_cid(selectList, 0L);
-
-        //- 遍历一级分类 ---> 最终得到 --》 Map<String, List<Catalog2Vo>>
-        //- > 直接使用前面老师讲解的 Collectors.toMap
+                childrenMap.getOrDefault(0L, Collections.emptyList());
 
         Map<String, List<Catalog2Vo>> categoryMap =
                 level1Categories.stream().collect(
-                        Collectors.toMap(k -> {
-                            return k.getId().toString();
-                        }, v -> {
-                            //这里就需要业务处理 List<Catalog2Vo>
-                            List<Catalog2Vo> catalog2Vos = new ArrayList<>();
+                        Collectors.toMap(k -> k.getId().toString(),
+                                v -> {
+                                    List<Catalog2Vo> catalog2Vos = new ArrayList<>();
 
-                            //-得到当前一级分类对应的所有二级分类
-                            List<CategoryEntity> level2Categories =
-                                    getParent_cid(selectList, v.getId());
+                                    //-得到当前一级分类对应的所有二级分类
+                                    List<CategoryEntity> level2Categories =
+                                            childrenMap.getOrDefault(v.getId(), Collections.emptyList());
 
-                            //-遍历二级分类 - 使用流式计算
-                            if (level2Categories != null && level2Categories.size() > 0) {
-                                catalog2Vos = level2Categories.stream().map(l2 -> {
+                                    if (!level2Categories.isEmpty()) {
+                                        catalog2Vos = level2Categories.stream().map(l2 -> {
 
-                                    //构建Catalog2Vo
-                                    Catalog2Vo catalog2Vo =
-                                            new Catalog2Vo(v.getId().toString(), null, l2.getId().toString(), l2.getName());
+                                            Catalog2Vo catalog2Vo =
+                                                    new Catalog2Vo(v.getId().toString(), null, l2.getId().toString(), l2.getName());
 
-                                    //遍历l2对应的三级分类
-                                    List<CategoryEntity> level3Categories = getParent_cid(selectList, l2.getId());
-                                    if (level3Categories != null && level3Categories.size() > 0) {
-                                        List<Catalog2Vo.Category3Vo> category3Vos = level3Categories.stream().map(l3 -> {
-                                            //构建当前二级分类对应的三级分类对象
-                                            Catalog2Vo.Category3Vo category3Vo =
-                                                    new Catalog2Vo.Category3Vo(l2.getId().toString(), l3.getId().toString(), l3.getName());
-                                            return category3Vo;
+                                            List<CategoryEntity> level3Categories =
+                                                    childrenMap.getOrDefault(l2.getId(), Collections.emptyList());
+                                            if (!level3Categories.isEmpty()) {
+                                                List<Catalog2Vo.Category3Vo> category3Vos = level3Categories.stream().map(l3 ->
+                                                        new Catalog2Vo.Category3Vo(l2.getId().toString(), l3.getId().toString(), l3.getName())
+                                                ).collect(Collectors.toList());
+                                                catalog2Vo.setCatalog3List(category3Vos);
+                                            }
+                                            return catalog2Vo;
                                         }).collect(Collectors.toList());
-                                        catalog2Vo.setCatalog3List(category3Vos);
                                     }
-                                    return catalog2Vo;
-                                }).collect(Collectors.toList());
-                            }
 
-                            return catalog2Vos;
-                        }));
+                                    return catalog2Vos;
+                                }));
 
         return categoryMap;
-    }
-
-    /**
-     * 编写方法，更加categoryId 递归的查找层级关系
-     * ，比如我们接收到 categoryId 301->parentId->....直到parentId=0
-     * 说明：这里有点麻烦
-     * <p>
-     * 这里老师做简单实现分析
-     * cascadedCategoryId =>[301]
-     */
-
-    private List<Long> getParentCategoryId(Long categoryId, List<Long> cascadedCategoryId) {
-
-        //1. 先把categoryId放入到
-        cascadedCategoryId.add(categoryId);
-        //2. 根据categoryId得到他的CategoryEntity
-        CategoryEntity categoryEntity = this.getById(categoryId);
-        //3. 判断categoryEntity的parentId是否为0, 如果不为0，说明他有上级分类
-        //   就递归处理
-        if (!categoryEntity.getParentId().equals(0L)) {
-            //21,cascadedCategoryId=> cascadedCategoryId[301,21,1]
-            getParentCategoryId(categoryEntity.getParentId(), cascadedCategoryId);
-        }
-
-        return cascadedCategoryId;
     }
 
 }
