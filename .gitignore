@@ -1,0 +1,64 @@
+# Maven / Java
+target/
+*.class
+*.jar
+*.war
+*.ear
+dependency-reduced-pom.xml
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code / editor
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Node / frontend
+node_modules/
+renren-fast-vue/node_modules/
+renren-fast-vue/dist/
+renren-fast-vue/npm-debug.log*
+renren-fast-vue/yarn-error.log*
+
+# Local env / secrets
+.env
+.env.*
+*.local
+application-local.yml
+application-local.properties
+bootstrap-local.yml
+bootstrap-local.properties
+
+# Large course material
+*.pdf
+# Docker runtime data (do not commit)
+docker/mysql/data/
+docker/logs/
+docker/derby.log
+
+# Local temp files
+_captcha/
+
+# Audit temp (do not commit)
+_audit/
+

@@ -1,0 +1,68 @@
+# ============================================================
+# hspliving 本地开发环境 —— 把原来跑在虚拟机(Vagrant/CentOS)里的
+# 中间件全部搬到 Docker Desktop，从此不用再 vagrant up。
+#
+# 使用方式（在 docker 目录下执行）：
+#   docker compose up -d     # 启动 MySQL（默认）
+#   docker compose ps        # 查看状态
+#   docker compose down      # 停止（保留数据卷）
+#   docker compose down -v   # 停止并清空数据卷，下次 up 会重新初始化数据库
+#
+# 后端服务（renren-fast / hspliving-commodity / hspliving-service /
+# hspliving-gateway）仍在 IDEA 里启动，连接地址已改为 127.0.0.1，
+# 无需再依赖 192.168.56.100 虚拟机。
+# ============================================================
+
+services:
+  # ---------- 核心：MySQL 5.7----------
+  mysql:
+    image: mysql:5.7
+    container_name: hspliving-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"                 # 宿主机 3306 -> 容器 3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root     # 与各服务配置中的 root/root 保持一致
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./mysql/conf:/etc/mysql/conf.d            # 字符集等配置
+      - ./mysql/data:/var/lib/mysql               # 数据持久化到宿主机
+      - ./mysql/init:/docker-entrypoint-initdb.d  # 首次启动自动建库导数据
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  # ---------- 可选：把 Nacos 也搬进 Docker ----------
+  # 注意：容器里是全新 Nacos，需要重新创建配置中心：
+  #   namespace : 15f5838a-532a-4090-bc1b-93c447409530（dev）
+  #   dataId    : hspliving-service.yml（group: dev），内容为 OSS/端口配置
+  # 若你本机已装好 Nacos（127.0.0.1:8848）且配置中心可用，保持注释即可。
+  # nacos:
+  #   image: nacos/nacos-server:v2.2.3
+  #   container_name: hspliving-nacos
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8848:8848"
+  #     - "9848:9848"
+  #   environment:
+  #     MODE: standalone
+  #     JVM_XMS: 256m
+  #     JVM_XMX: 512m
+
+  # ---------- 可选：Nginx 反向代理 ----------
+  # 只有用 www.hspliving.com 域名部署商城首页时才需要；本地开发直接
+  # 访问 8001(前端) 和 5050(网关) 即可，不需要 Nginx。
+  # nginx:
+  #   image: nginx:1.10
+  #   container_name: hspliving-nginx
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx/conf:/etc/nginx
+  #     - ./nginx/html:/usr/share/nginx/html

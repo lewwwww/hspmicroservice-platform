@@ -1,0 +1,18 @@
+# hspliving-service 配置（已移除硬编码 OSS 密钥）
+# 如需启用 OSS，请通过环境变量注入 ALICLOUD_ACCESS_KEY / ALICLOUD_SECRET_KEY
+#server:
+#  port: 7070
+#
+#spring:
+#  cloud:
+#    alicloud:
+#      access-key: ${ALICLOUD_ACCESS_KEY:}
+#      secret-key: ${ALICLOUD_SECRET_KEY:}
+#      oss:
+#        endpoint: oss-cn-beijing.aliyuncs.com
+#        bucket: yyyliving10000
+#    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848
+#  application:
+#    name: hspliving-service
